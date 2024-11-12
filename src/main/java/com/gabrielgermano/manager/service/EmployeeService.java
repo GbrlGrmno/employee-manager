@@ -48,6 +48,10 @@ public class EmployeeService {
         logger.info("Updating employee with ID: {}", id);
         Employee foundEmployee = employeeRepository.findById(id).orElseThrow(() -> new EmployeeNotFoundException(id));
 
+        if (!foundEmployee.getEmail().equals(employee.getEmail()) && employeeRepository.existsByEmail(employee.getEmail())) {
+            throw new EmailAlreadyExistsException(employee.getEmail());
+        }
+
         foundEmployee.setName(employee.getName());
         foundEmployee.setSalary(employee.getSalary());
         foundEmployee.setEmail(employee.getEmail());
