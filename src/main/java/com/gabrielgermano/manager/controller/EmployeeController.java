@@ -1,5 +1,6 @@
 package com.gabrielgermano.manager.controller;
 
+import com.gabrielgermano.manager.dto.EmployeeDTO;
 import com.gabrielgermano.manager.model.Employee;
 import com.gabrielgermano.manager.service.EmployeeService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -9,8 +10,6 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -69,7 +68,7 @@ public class EmployeeController {
                 @Content(examples = @ExampleObject(value = "An employee with email employee@gmail.com already exists"))
             })
     })
-    public ResponseEntity<Employee> createEmployee(@RequestBody Employee employee) {
+    public ResponseEntity<Employee> createEmployee(@RequestBody EmployeeDTO employee) {
         return new ResponseEntity<>(employeeService.createEmployee(employee), HttpStatus.CREATED);
     }
 
@@ -100,7 +99,7 @@ public class EmployeeController {
                     @Content(examples = @ExampleObject(value = "An employee with email employee@gmail.com already exists"))
             })
     })
-    public ResponseEntity<Employee> updateEmployee(@PathVariable("id") Long id, @RequestBody Employee employee) {
+    public ResponseEntity<Employee> updateEmployee(@PathVariable("id") Long id, @RequestBody EmployeeDTO employee) {
         return ResponseEntity.ok(employeeService.updateEmployee(id, employee));
     }
 
