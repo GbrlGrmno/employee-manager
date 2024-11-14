@@ -1,5 +1,7 @@
 package com.gabrielgermano.manager.controller;
 
+import com.gabrielgermano.manager.dto.EmployeeDTO;
+import com.gabrielgermano.manager.exception.ErrorResponse;
 import com.gabrielgermano.manager.model.Employee;
 import com.gabrielgermano.manager.service.EmployeeService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -9,8 +11,6 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -31,7 +31,7 @@ public class EmployeeController {
     }
 
     @GetMapping
-    @Operation(summary = "Get all employees", description = "Retrieves all current employees in the application")
+    @Operation(summary = "Get all employees", description = "Retrieves all current employee in the application")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Employees Found", content = {
                     @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
@@ -50,7 +50,11 @@ public class EmployeeController {
                             schema = @Schema(implementation = Employee.class))
             }),
             @ApiResponse(responseCode = "404", description = "Employee not found", content = {
-                @Content(examples = @ExampleObject(value = "Employee with id 1 not found"))
+                @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                        examples = @ExampleObject(value = "{\"timestamp\": \"2024-11-13T22:42:59.639+00:00\"," +
+                                " \"status\": 404, \"error\": \"Not Found\"," +
+                                " \"message\": \"Employee with id 1 not found\"," +
+                                " \"path\": \"/employee/{id}\"}"))
             })
     })
     public ResponseEntity<Employee> getEmployeeById(@PathVariable("id") Long id) {
@@ -66,10 +70,14 @@ public class EmployeeController {
                     schema = @Schema(implementation = Employee.class))
             }),
             @ApiResponse(responseCode = "409", description = "Conflict: An employee with the provided email address already exists", content =  {
-                @Content(examples = @ExampleObject(value = "An employee with email employee@gmail.com already exists"))
+                @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                        examples = @ExampleObject(value = "{\"timestamp\": \"2024-11-13T22:42:59.639+00:00\"," +
+                        " \"status\": 409, \"error\": \"Conflict\"," +
+                        " \"message\": \"An employee with email employee@example.com already exists\"," +
+                        " \"path\": \"/employee/{id}\"}"))
             })
     })
-    public ResponseEntity<Employee> createEmployee(@RequestBody Employee employee) {
+    public ResponseEntity<Employee> createEmployee(@RequestBody EmployeeDTO employee) {
         return new ResponseEntity<>(employeeService.createEmployee(employee), HttpStatus.CREATED);
     }
 
@@ -78,7 +86,11 @@ public class EmployeeController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Employee successfully deleted"),
             @ApiResponse(responseCode = "404", description = "Employee not found", content = {
-                    @Content(examples = @ExampleObject(value = "Employee with id 1 not found"))
+                    @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            examples = @ExampleObject(value = "{\"timestamp\": \"2024-11-13T22:42:59.639+00:00\"," +
+                                    " \"status\": 404, \"error\": \"Not Found\"," +
+                                    " \"message\": \"Employee with id 1 not found\"," +
+                                    " \"path\": \"/employee/{id}\"}"))
             })
     })
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -94,13 +106,21 @@ public class EmployeeController {
                     schema = @Schema(implementation = Employee.class))
             }),
             @ApiResponse(responseCode = "404", description = "Employee not found", content = {
-                    @Content(examples = @ExampleObject(value = "Employee with id 1 not found"))
+                    @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            examples = @ExampleObject(value = "{\"timestamp\": \"2024-11-13T22:42:59.639+00:00\"," +
+                                    " \"status\": 404, \"error\": \"Not Found\"," +
+                                    " \"message\": \"Employee with id 1 not found\"," +
+                                    " \"path\": \"/employee/{id}\"}"))
             }),
-            @ApiResponse(responseCode = "409", description = "Conflict: An employee with the provided email address already exists", content = {
-                    @Content(examples = @ExampleObject(value = "An employee with email employee@gmail.com already exists"))
+            @ApiResponse(responseCode = "409", description = "Conflict: An employee with the provided email address already exists", content =  {
+                    @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            examples = @ExampleObject(value = "{\"timestamp\": \"2024-11-13T22:42:59.639+00:00\"," +
+                                    " \"status\": 409, \"error\": \"Conflict\"," +
+                                    " \"message\": \"An employee with email employee@example.com already exists\"," +
+                                    " \"path\": \"/employee/{id}\"}"))
             })
     })
-    public ResponseEntity<Employee> updateEmployee(@PathVariable("id") Long id, @RequestBody Employee employee) {
+    public ResponseEntity<Employee> updateEmployee(@PathVariable("id") Long id, @RequestBody EmployeeDTO employee) {
         return ResponseEntity.ok(employeeService.updateEmployee(id, employee));
     }
 

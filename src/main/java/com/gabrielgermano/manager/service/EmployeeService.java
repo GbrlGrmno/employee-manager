@@ -1,9 +1,11 @@
 package com.gabrielgermano.manager.service;
 
+import com.gabrielgermano.manager.dto.EmployeeDTO;
 import com.gabrielgermano.manager.exception.EmailAlreadyExistsException;
 import com.gabrielgermano.manager.exception.EmployeeNotFoundException;
 import com.gabrielgermano.manager.model.Employee;
 import com.gabrielgermano.manager.repository.EmployeeRepository;
+import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +19,8 @@ public class EmployeeService {
     private final EmployeeRepository employeeRepository;
 
     private final Logger logger = LoggerFactory.getLogger(EmployeeService.class);
+
+    private final ModelMapper modelMapper  = new ModelMapper();
 
     @Autowired
     public EmployeeService(EmployeeRepository employeeRepository) {
@@ -33,7 +37,7 @@ public class EmployeeService {
         return employeeRepository.findAll();
     }
 
-    public Employee createEmployee(Employee employee) {
+    public Employee createEmployee(EmployeeDTO employee) {
         logger.info("Creating new employee: name={}, email={}, position={}", employee.getName(), employee.getEmail(), employee.getPosition());
 
         if (employeeRepository.existsByEmail(employee.getEmail())) {
@@ -41,10 +45,10 @@ public class EmployeeService {
             throw new EmailAlreadyExistsException(employee.getEmail());
         }
 
-        return employeeRepository.save(employee);
+        return employeeRepository.save(modelMapper.map(employee, Employee.class));
     }
 
-    public Employee updateEmployee(Long id, Employee employee) {
+    public Employee updateEmployee(Long id, EmployeeDTO employee) {
         logger.info("Updating employee with ID: {}", id);
         Employee foundEmployee = employeeRepository.findById(id).orElseThrow(() -> new EmployeeNotFoundException(id));
 
